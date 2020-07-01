@@ -1,18 +1,25 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+  <default-layout>
+    <v-card class="elevation-12">
+      <v-toolbar color="primary" dark flat>
+        <v-spacer></v-spacer>
+        <v-toolbar-title>Inicio form</v-toolbar-title>
+        <v-spacer></v-spacer>
+      </v-toolbar>
+      <v-card-text></v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn color="primary">Inicio</v-btn>
+      </v-card-actions>
+    </v-card>
+  </default-layout>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
-
+import DefaultLayout from "../layouts/default-layout";
 export default {
-  name: 'Home',
   components: {
-    HelloWorld
+    DefaultLayout
   }
-}
+};
 </script>

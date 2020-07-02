@@ -29,7 +29,7 @@
           <template v-slot:top>
             <v-toolbar flat color="white">
               <v-dialog v-model="dialog" max-width="500px">
-                <template v-slot:activator="{ on, attrs }">
+                <template v-slot:activator="{ on }">
                   <v-container class="mt-5">
                     <v-row>
                       <v-col cols="5">

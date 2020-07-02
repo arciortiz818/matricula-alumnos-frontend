@@ -58,23 +58,23 @@
 <script>
 export default {
   props: {
-    source: String
+    source: String,
   },
   data: () => ({
-    drawer: null
+    drawer: null,
   }),
 
   methods: {
     logout() {
       this.$store
-        .dispatch("logout")
+        .dispatch('logout')
         .then(() => {
-          this.$router.replace("/");
+          this.$router.replace('/');
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
         });
-    }
-  }
+    },
+  },
 };
 </script>

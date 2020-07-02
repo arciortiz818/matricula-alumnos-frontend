@@ -46,23 +46,23 @@
                         <v-col cols="12">
                           <v-form ref="form" v-model="valid" lazy-validation>
                             <v-text-field
-                              v-model="editedItem.codigo"
+                              v-model="programa.codigo"
                               label="Código"
-                              :rules="[v => !!v || 'Código es requerido.']"
+                              :rules="[(v) => !!v || 'Código es requerido.']"
                               required
                             ></v-text-field>
                             <v-text-field
-                              v-model="editedItem.nombre"
+                              v-model="programa.nombre"
                               label="Nombre"
-                              :rules="[v => !!v || 'Nombre es requerido.']"
+                              :rules="[(v) => !!v || 'Nombre es requerido.']"
                               required
                             ></v-text-field>
                             <v-text-field
-                              v-model="editedItem.valor_nivel"
+                              v-model="programa.valor_nivel"
                               label="Valor Semestre"
                             ></v-text-field>
                             <v-text-field
-                              v-model="editedItem.numero_niveles"
+                              v-model="programa.numero_niveles"
                               label="Semestres"
                             ></v-text-field>
                           </v-form>
@@ -96,102 +96,91 @@
 </template>
 
 <script>
-import DefaultLayout from "../layouts/default-layout";
-import { mapState } from "vuex";
+import DefaultLayout from '../layouts/default-layout';
+import { mapState } from 'vuex';
 
 export default {
   components: {
-    DefaultLayout
+    DefaultLayout,
   },
   data() {
     return {
       valid: false,
       dialog: false,
-      editedItem: {
-        id: 0,
-        codigo: "",
-        nombre: "",
-        valor_nivel: 0,
-        numero_niveles: 0
-      },
-      defaultItem: {
-        id: 0,
-        codigo: "",
-        nombre: "",
-        valor_nivel: 0,
-        numero_niveles: 0
-      },
-      editedIndex: -1
+      editing: false,
     };
   },
   mounted() {
     this.getProgramas();
   },
   computed: {
-    ...mapState("Programas", ["programas", "table_headers"]),
+    ...mapState('Programas', ['programas', 'programa', 'table_headers']),
     formTitle() {
-      return this.editedIndex === -1 ? "Nuevo Programa" : "Editar Programa";
-    }
+      return this.editing === 'true' ? 'Editar Programa' : 'Nuevo Programa';
+    },
   },
   methods: {
     getProgramas() {
       this.$store
-        .dispatch("Programas/getAllProgramas")
-        .then(res => {
+        .dispatch('Programas/getAllProgramas')
+        .then((res) => {
           console.log(res);
         })
-        .catch(err => {
+        .catch((err) => {
           this.$toastr.e(err.message);
         });
     },
 
     editItem(item) {
-      this.editedIndex = this.programas.indexOf(item);
-      this.editedItem = Object.assign({}, item);
-      this.dialog = true;
+      this.editing = true;
+      this.$store
+        .dispatch('Programas/getPrograma', item.id)
+        .then((res) => {
+          this.dialog = true;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
 
     deleteItem(item) {
-      const index = this.programas.indexOf(item);
       this.$store
-        .dispatch("Programas/deletePrograma", { index: index, id: item.id })
-        .then(res => {
+        .dispatch('Programas/deletePrograma', item.id)
+        .then((res) => {
           this.$toastr.s(res.message);
         })
-        .catch(err => {
+        .catch((err) => {
+          console.log('Eliminando Programa', err.message);
           this.$toastr.e(err.message);
         });
     },
     save() {
-      console.log("validando");
       if (!this.$refs.form.validate()) {
-        console.log("no valido");
+        console.log('no valido');
         return;
       }
-      if (this.editedIndex > -1) {
+      if (this.editing) {
         this.$store
-          .dispatch("Programas/editPrograma", {
-            index: this.editedIndex,
-            id: this.editedItem.id,
-            data: this.editedItem
-          })
-          .then(res => {
+          .dispatch('Programas/editPrograma', this.programa)
+          .then((res) => {
+            this.getProgramas();
+            this.editing = false;
             this.$toastr.s(res.message);
             this.close();
           })
-          .catch(err => {
+          .catch((err) => {
+            console.log('Editando', err.message);
             this.$toastr.e(err.message);
           });
       } else {
         this.$store
-          .dispatch("Programas/addPrograma", {
-            data: this.editedItem
-          })
-          .then(res => {
+          .dispatch('Programas/addPrograma', this.programa)
+          .then((res) => {
+            this.getProgramas();
             this.$toastr.s(res.message);
             this.close();
           })
-          .catch(err => {
+          .catch((err) => {
             this.$toastr.e(err.message);
           });
       }
@@ -199,11 +188,7 @@ export default {
     close() {
       this.$refs.form.reset();
       this.dialog = false;
-      this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem);
-        this.editedIndex = -1;
-      });
-    }
-  }
+    },
+  },
 };
 </script>

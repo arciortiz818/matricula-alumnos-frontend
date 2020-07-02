@@ -1,21 +1,34 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
-import User from '../modules/User'
-import Programas from '../modules/Programas'
-import Materias from '../modules/Materias'
-import Estudiantes from '../modules/Estudiantes'
+import Vue from 'vue';
+import Vuex from 'vuex';
+import User from '../modules/User';
+import Programas from '../modules/Programas';
+import Materias from '../modules/Materias';
+import Estudiantes from '../modules/Estudiantes';
+import Paises from '../modules/Paises';
+import Departamentos from '../modules/Departamentos';
+import Ciudades from '../modules/Ciudades';
+import TipoDocumento from '../modules/TipoDocumento';
 
-Vue.use(Vuex)
+Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    layout: ''
+    layout: '',
   },
   mutations: {
-    SET_LAYOUT (state, payload) {
-      state.layout = payload
-    }
+    SET_LAYOUT(state, payload) {
+      state.layout = payload;
+    },
   },
   actions: {},
-  modules: { User, Programas, Materias, Estudiantes }
-})
+  modules: {
+    User,
+    Programas,
+    Materias,
+    Estudiantes,
+    Paises,
+    Departamentos,
+    Ciudades,
+    TipoDocumento,
+  },
+});

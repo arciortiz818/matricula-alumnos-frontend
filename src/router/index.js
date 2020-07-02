@@ -1,82 +1,90 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-Vue.use(VueRouter)
+import Vue from 'vue';
+import VueRouter from 'vue-router';
+Vue.use(VueRouter);
 
 const routes = [
   {
     path: '*',
-    redirect: '/login'
+    redirect: '/login',
   },
   {
     path: '/',
-    redirect: '/login'
+    redirect: '/login',
   },
   {
     path: '/login',
     name: 'Login',
     meta: {
-      requiresAuth: false
+      requiresAuth: false,
     },
-    component: () => import('../views/Login.vue')
+    component: () => import('../views/Login.vue'),
   },
   {
     path: '/home',
     name: 'Home',
     meta: {
-      requiresAuth: true
+      requiresAuth: true,
     },
-    component: () => import('../views/Home.vue')
+    component: () => import('../views/Home.vue'),
   },
   {
     path: '/programas',
     name: 'Programas',
     meta: {
-      requiresAuth: true
+      requiresAuth: true,
     },
-    component: () => import('../views/Programas.vue')
+    component: () => import('../views/Programas.vue'),
   },
   {
     path: '/materias',
     name: 'Materias',
     meta: {
-      requiresAuth: true
+      requiresAuth: true,
     },
-    component: () => import('../views/Materias.vue')
+    component: () => import('../views/Materias.vue'),
   },
   {
     path: '/estudiantes',
     name: 'Estudiantes',
     meta: {
-      requiresAuth: true
+      requiresAuth: true,
     },
-    component: () => import('../views/Estudiantes.vue')
+    component: () => import('../views/Estudiantes.vue'),
+  },
+  {
+    path: '/ficha-estudiante',
+    name: 'FichaEstudiante',
+    meta: {
+      requiresAuth: true,
+    },
+    component: () => import('../views/FichaEstudiante.vue'),
   },
   {
     path: '/register',
     name: 'Register',
-    component: () => import('../views/Register.vue')
-  }
-]
+    component: () => import('../views/Register.vue'),
+  },
+];
 
 const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
-  routes
-})
+  routes,
+});
 
 router.beforeEach((to, from, next) => {
-  const user = window.localStorage.getItem('nombre_usuario')
-  const token = window.localStorage.getItem('token')
-  const requiresAuth = to.matched.some(r => r.meta.requiresAuth)
+  const user = window.localStorage.getItem('nombre_usuario');
+  const token = window.localStorage.getItem('token');
+  const requiresAuth = to.matched.some((r) => r.meta.requiresAuth);
   if (requiresAuth) {
     if (user === null && token === null) {
-      next('/login')
+      next('/login');
     } else {
-      next()
+      next();
     }
   } else {
-    next()
+    next();
   }
-})
+});
 
-export default router
+export default router;

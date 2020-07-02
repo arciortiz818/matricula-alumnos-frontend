@@ -8,6 +8,7 @@ import Paises from '../modules/Paises';
 import Departamentos from '../modules/Departamentos';
 import Ciudades from '../modules/Ciudades';
 import TipoDocumento from '../modules/TipoDocumento';
+import Matriculas from '../modules/Matriculas';
 
 Vue.use(Vuex);
 
@@ -30,5 +31,6 @@ export default new Vuex.Store({
     Departamentos,
     Ciudades,
     TipoDocumento,
+    Matriculas,
   },
 });

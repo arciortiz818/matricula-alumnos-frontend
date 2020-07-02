@@ -13,11 +13,12 @@ export default {
         value: 'index',
       },
       {
-        text: 'Código SNIES',
+        text: 'Código',
         align: 'left',
         sortable: false,
         value: 'codigo',
       },
+      { text: 'Plan', align: 'left', sortable: false, value: 'plan' },
       { text: 'Nombre', align: 'left', sortable: false, value: 'nombre' },
       {
         text: 'Semestres',

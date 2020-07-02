@@ -60,6 +60,14 @@ const routes = [
     component: () => import('../views/FichaEstudiante.vue'),
   },
   {
+    path: '/matriculas',
+    name: 'Matriculas',
+    meta: {
+      requiresAuth: true,
+    },
+    component: () => import('../views/Matriculas.vue'),
+  },
+  {
     path: '/register',
     name: 'Register',
     component: () => import('../views/Register.vue'),

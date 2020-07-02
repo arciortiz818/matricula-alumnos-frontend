@@ -14,26 +14,14 @@
           class="elevation-1"
         >
           <template slot="no-data">
-            <v-progress-circular
-              :size="50"
-              :width="7"
-              color="secondary"
-              indeterminate
-            ></v-progress-circular>
+            <v-progress-circular :size="50" :width="7" color="secondary" indeterminate></v-progress-circular>
           </template>
           <template v-slot:top>
             <v-toolbar flat color="white">
               <v-spacer></v-spacer>
               <v-dialog v-model="dialog" max-width="500px">
                 <template v-slot:activator="{ on, attrs }">
-                  <v-btn
-                    color="secondary"
-                    dark
-                    class="mb-2"
-                    v-bind="attrs"
-                    v-on="on"
-                    >Nuevo</v-btn
-                  >
+                  <v-btn color="secondary" dark class="mb-2" v-bind="attrs" v-on="on">Nuevo</v-btn>
                 </template>
                 <v-card>
                   <v-card-title>
@@ -52,19 +40,19 @@
                               required
                             ></v-text-field>
                             <v-text-field
+                              v-model="programa.plan"
+                              label="Plan"
+                              :rules="[(v) => !!v || 'Plan es requerido.']"
+                              required
+                            ></v-text-field>
+                            <v-text-field
                               v-model="programa.nombre"
                               label="Nombre"
                               :rules="[(v) => !!v || 'Nombre es requerido.']"
                               required
                             ></v-text-field>
-                            <v-text-field
-                              v-model="programa.valor_nivel"
-                              label="Valor Semestre"
-                            ></v-text-field>
-                            <v-text-field
-                              v-model="programa.numero_niveles"
-                              label="Semestres"
-                            ></v-text-field>
+                            <v-text-field v-model="programa.valor_nivel" label="Valor Semestre"></v-text-field>
+                            <v-text-field v-model="programa.numero_niveles" label="Semestres"></v-text-field>
                           </v-form>
                         </v-col>
                       </v-row>
@@ -73,9 +61,7 @@
 
                   <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="blue darken-1" text @click="close"
-                      >Cancel</v-btn
-                    >
+                    <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
                     <v-btn color="blue darken-1" text @click="save">Save</v-btn>
                   </v-card-actions>
                 </v-card>

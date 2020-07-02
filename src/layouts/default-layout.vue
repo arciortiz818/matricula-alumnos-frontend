@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-navigation-drawer v-model="drawer" app clipped>
+    <v-navigation-drawer v-model="drawer" app clipped color="primary" dark>
       <!-- <v-list dense> -->
       <v-list>
         <v-list-item link to="/programas">
@@ -27,6 +27,14 @@
             <v-list-item-title>Estudiantes</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
+        <v-list-item link to="/matriculas">
+          <v-list-item-action>
+            <v-icon>mdi-cog</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Matriculas</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
       </v-list>
     </v-navigation-drawer>
 
@@ -41,7 +49,7 @@
     <v-main>
       <v-container class="fill-height" fluid>
         <v-row align="center" justify="center">
-          <v-col cols="10">
+          <v-col cols="11">
             <slot />
           </v-col>
         </v-row>

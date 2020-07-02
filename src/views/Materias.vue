@@ -7,9 +7,6 @@
         <v-spacer></v-spacer>
       </v-toolbar>
       <v-card-text>
-        <v-row>
-          <v-col cols="6"> </v-col>
-        </v-row>
         <v-data-table
           :headers="table_headers"
           :items="materias"
@@ -27,41 +24,39 @@
             <v-text>Sin registros</v-text>
           </template>
           <template v-slot:top>
+            <v-container>
+              <v-row>
+                <v-col cols="5">
+                  <v-select
+                    v-model="programaFilter"
+                    :items="programas"
+                    label="Seleccione un Programa"
+                    @change="getMaterias()"
+                  >
+                    <template v-slot:selection="data">
+                      {{ data.item.codigo }} -
+                      {{ data.item.nombre }}
+                    </template>
+                    <template v-slot:item="data">
+                      {{ data.item.codigo }} -
+                      {{ data.item.nombre }}
+                    </template>
+                  </v-select>
+                </v-col>
+              </v-row>
+            </v-container>
             <v-toolbar flat color="white">
               <v-dialog v-model="dialog" max-width="500px">
                 <template v-slot:activator="{ on }">
-                  <v-container class="mt-5">
-                    <v-row>
-                      <v-col cols="5">
-                        <v-select
-                          v-model="programaFilter"
-                          :items="programas"
-                          label="Seleccione un Programa"
-                          @change="getMaterias()"
-                        >
-                          <template v-slot:selection="data"
-                            >{{ data.item.codigo }} -
-                            {{ data.item.nombre }}</template
-                          >
-                          <template v-slot:item="data"
-                            >{{ data.item.codigo }} -
-                            {{ data.item.nombre }}</template
-                          >
-                        </v-select>
-                      </v-col>
-                      <v-spacer></v-spacer>
-                      <v-col>
-                        <v-btn
-                          color="secondary"
-                          dark
-                          class="mb-2"
-                          v-on="on"
-                          @click="newItem()"
-                          >Nueva Materia</v-btn
-                        >
-                      </v-col>
-                    </v-row>
-                  </v-container>
+                  <v-spacer></v-spacer>
+                  <v-btn
+                    color="secondary"
+                    dark
+                    class="mb-2"
+                    v-on="on"
+                    @click="newItem()"
+                    >Nueva Materia</v-btn
+                  >
                 </template>
                 <v-card>
                   <v-card-title>
@@ -94,15 +89,15 @@
                               item-text="nombre"
                               item-value="id"
                             >
-                              <template v-slot:selection="data"
-                                >{{ data.item.codigo }} -
-                                {{ data.item.nombre }}</template
-                              >
-                              <template v-slot:item="data"
-                                >{{ data.item.codigo }} -
-                                {{ data.item.nombre }}</template
-                              ></v-select
-                            >
+                              <template v-slot:selection="data">
+                                {{ data.item.codigo }} -
+                                {{ data.item.nombre }}
+                              </template>
+                              <template v-slot:item="data">
+                                {{ data.item.codigo }} -
+                                {{ data.item.nombre }}
+                              </template>
+                            </v-select>
                             <v-text-field
                               v-model="materia.nivel"
                               label="Semestre"

@@ -14,11 +14,11 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    layout: '',
+    loading: false,
   },
   mutations: {
-    SET_LAYOUT(state, payload) {
-      state.layout = payload;
+    SET_LOADING(state, payload) {
+      state.loading = payload;
     },
   },
   actions: {},

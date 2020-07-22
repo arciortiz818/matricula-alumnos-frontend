@@ -11,23 +11,23 @@
           :headers="table_headers"
           :items="estudiantes"
           :items-per-page="10"
-          class="elevation-1"
+          class="elevation-1 mt-2 mb-2"
         >
           <template slot="no-data">
             <v-progress-circular
-              :size="50"
+              v-if="cargando"
+              :size="70"
               :width="7"
               color="secondary"
               indeterminate
+              class="mt-5 mb-5"
             ></v-progress-circular>
-            <span>Sin registros</span>
+            <div v-else>Sin registros</div>
           </template>
           <template v-slot:top>
             <v-toolbar flat color="white">
               <v-spacer></v-spacer>
-              <v-btn color="secondary" dark class="mb-2" @click="newItem()"
-                >Nuevo</v-btn
-              >
+              <v-btn color="secondary" dark class="mb-2" @click="newItem()">Nuevo Estudiante</v-btn>
             </v-toolbar>
           </template>
           <template v-slot:item.actions="{ item }">
@@ -41,15 +41,14 @@
 </template>
 
 <script>
-import DefaultLayout from '../layouts/default-layout';
 import { mapState } from 'vuex';
 import axios from 'axios';
 export default {
-  components: {
-    DefaultLayout,
-  },
+
   data() {
-    return {};
+    return {
+      cargando: false
+    };
   },
   mounted() {
     this.getEstudiantes();
@@ -59,9 +58,11 @@ export default {
   },
   methods: {
     getEstudiantes() {
+      this.cargando = true;
       this.$store
         .dispatch('Estudiantes/getAllEstudiantes')
         .then((res) => {
+          this.cargando = false;
           console.log(res);
         })
         .catch((err) => {

@@ -3,15 +3,15 @@ import axios from 'axios';
 export default {
   namespaced: true,
   state: {
-    materias: [],
-    materia: {},
+    // materias: [],
+    // materia: {},
     table_headers: [
-      {
-        text: '#',
-        align: 'center',
-        sortable: false,
-        value: 'index',
-      },
+      // {
+      //   text: '#',
+      //   align: 'center',
+      //   sortable: false,
+      //   value: 'index',
+      // },
       {
         text: 'Código',
         align: 'left',
@@ -109,7 +109,22 @@ export default {
           .get('admin/materias/programa/' + idPrograma)
           .then((res) => {
             if (res.data.success === 'true') {
-              commit('SET_MATERIAS', res.data.data);
+              resolve(res.data);
+            } else {
+              reject(res.data);
+            }
+          })
+          .catch((err) => {
+            reject(err.response.data);
+          });
+      });
+    },
+    getMateriasxProgramaSemestre({ commit }, idPrograma) {
+      return new Promise((resolve, reject) => {
+        axios
+          .get('admin/materias/programa-semestre/' + idPrograma)
+          .then((res) => {
+            if (res.data.success === 'true') {
               resolve(res.data);
             } else {
               reject(res.data);

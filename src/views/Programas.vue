@@ -14,14 +14,22 @@
           class="elevation-1"
         >
           <template slot="no-data">
-            <v-progress-circular :size="50" :width="7" color="secondary" indeterminate></v-progress-circular>
+            <v-progress-circular
+              v-if="cargando"
+              :size="70"
+              :width="7"
+              color="secondary"
+              indeterminate
+              class="mt-5 mb-5"
+            ></v-progress-circular>
+            <div v-else>Sin registros</div>
           </template>
           <template v-slot:top>
             <v-toolbar flat color="white">
               <v-spacer></v-spacer>
               <v-dialog v-model="dialog" max-width="500px">
                 <template v-slot:activator="{ on, attrs }">
-                  <v-btn color="secondary" dark class="mb-2" v-bind="attrs" v-on="on">Nuevo</v-btn>
+                  <v-btn color="secondary" dark class="mb-2" v-bind="attrs" v-on="on">Nuevo Programa</v-btn>
                 </template>
                 <v-card>
                   <v-card-title>
@@ -82,34 +90,70 @@
 </template>
 
 <script>
-import DefaultLayout from '../layouts/default-layout';
 import { mapState } from 'vuex';
 
 export default {
-  components: {
-    DefaultLayout,
-  },
+
   data() {
     return {
       valid: false,
       dialog: false,
       editing: false,
+      programas: [],
+      programa: {},
+      table_headers: [
+        // {
+        //   text: '#',
+        //   align: 'center',
+        //   sortable: false,
+        //   value: 'index',
+        // },
+        {
+          text: 'Código',
+          align: 'left',
+          sortable: false,
+          value: 'codigo',
+        },
+        { text: 'Plan', align: 'left', sortable: false, value: 'plan' },
+        { text: 'Nombre', align: 'left', sortable: false, value: 'nombre' },
+        {
+          text: 'Semestres',
+          align: 'center',
+          sortable: false,
+          value: 'numero_niveles',
+        },
+        {
+          text: 'Valor Semestre',
+          align: 'right',
+          sortable: false,
+          value: 'valor_nivel',
+        },
+        {
+          text: 'Acciones',
+          align: 'center',
+          sortable: false,
+          value: 'actions',
+        },
+      ],
+      cargando: false
     };
   },
   mounted() {
     this.getProgramas();
   },
   computed: {
-    ...mapState('Programas', ['programas', 'programa', 'table_headers']),
     formTitle() {
       return this.editing === 'true' ? 'Editar Programa' : 'Nuevo Programa';
     },
   },
   methods: {
     getProgramas() {
+      this.cargando = true;
       this.$store
-        .dispatch('Programas/getAllProgramas')
+        .dispatch('Programas/getProgramas')
         .then((res) => {
+          this.programas = res.data;
+          this.cargando = false;
           console.log(res);
         })
         .catch((err) => {
@@ -122,6 +166,7 @@ export default {
       this.$store
         .dispatch('Programas/getPrograma', item.id)
         .then((res) => {
+          this.programa = res.data;
           this.dialog = true;
         })
         .catch((error) => {

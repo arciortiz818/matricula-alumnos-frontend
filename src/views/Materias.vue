@@ -15,13 +15,14 @@
         >
           <template slot="no-data">
             <v-progress-circular
-              :size="50"
+              v-if="cargando"
+              :size="70"
               :width="7"
               color="secondary"
               indeterminate
-              v-show="programaFilter && materias == null"
+              class="mt-2 mb-2"
             ></v-progress-circular>
-            <v-text>Sin registros</v-text>
+            <div v-else>Sin registros</div>
           </template>
           <template v-slot:top>
             <v-container>
@@ -55,8 +56,7 @@
                     class="mb-2"
                     v-on="on"
                     @click="newItem()"
-                    >Nueva Materia</v-btn
-                  >
+                  >Nueva Materia</v-btn>
                 </template>
                 <v-card>
                   <v-card-title>
@@ -114,18 +114,9 @@
                               ]"
                               required
                             ></v-text-field>
-                            <v-text-field
-                              v-model="materia.valor_credito"
-                              label="Valor Crédito"
-                            ></v-text-field>
-                            <v-text-field
-                              v-model="materia.valor_materia"
-                              label="Valor Materia"
-                            ></v-text-field>
-                            <v-text-field
-                              v-model="materia.porc_descuento"
-                              label="% Descuento"
-                            ></v-text-field>
+                            <v-text-field v-model="materia.valor_credito" label="Valor Crédito"></v-text-field>
+                            <v-text-field v-model="materia.valor_materia" label="Valor Materia"></v-text-field>
+                            <v-text-field v-model="materia.porc_descuento" label="% Descuento"></v-text-field>
                           </v-form>
                         </v-col>
                       </v-row>
@@ -134,9 +125,7 @@
 
                   <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="blue darken-1" text @click="close"
-                      >Cancel</v-btn
-                    >
+                    <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
                     <v-btn color="blue darken-1" text @click="save">Save</v-btn>
                   </v-card-actions>
                 </v-card>
@@ -160,13 +149,10 @@
 </template>
 
 <script>
-import DefaultLayout from '../layouts/default-layout';
 import { mapState } from 'vuex';
 
 export default {
-  components: {
-    DefaultLayout,
-  },
+
   data() {
     return {
       valid: false,
@@ -174,14 +160,16 @@ export default {
       editing: false,
       programas: [],
       programaFilter: null,
+      materias: [],
+      materia: {},
+      cargando: false
     };
   },
   mounted() {
-    this.$store.commit('Materias/SET_MATERIAS', []);
     this.getProgramas();
   },
   computed: {
-    ...mapState('Materias', ['materias', 'materia', 'table_headers']),
+    ...mapState('Materias', ['table_headers']),
     formTitle() {
       return this.editing === 'true' ? 'Editar Materia' : 'Nueva Materia';
     },
@@ -191,9 +179,12 @@ export default {
       if (!this.programaFilter) {
         return;
       }
+      this.cargando = true;
       this.$store
         .dispatch('Materias/getMateriasxPrograma', this.programaFilter.id)
         .then((res) => {
+          this.materias = res.data
+          this.cargando = false;
           console.log(res);
         })
         .catch((err) => {
@@ -205,6 +196,7 @@ export default {
       this.$store
         .dispatch('Materias/getMateria', item.id)
         .then((res) => {
+          this.materia = res.data;
           this.editing = true;
           this.dialog = true;
         })
@@ -258,10 +250,10 @@ export default {
       this.dialog = false;
     },
     newItem() {
-      this.$store.commit('SET_MATERIA', {});
+      this.materia = {};
     },
     getProgramas() {
-      this.$store.dispatch('Programas/getAllProgramas').then((res) => {
+      this.$store.dispatch('Programas/getProgramas').then((res) => {
         this.programas = res.data;
       });
     },

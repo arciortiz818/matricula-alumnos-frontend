@@ -1,6 +1,6 @@
 <template>
   <default-layout>
-    <v-container class="pt-0 mt-0">
+    <v-container class="pt-0">
       <v-row>
         <v-col md="6">
           <v-container>
@@ -18,22 +18,17 @@
                         <v-col cols="6">
                           <v-text-field
                             label="Documento Estudiante"
-                            v-model="docEstudiante"
+                            v-model="estudiante.documento"
                             @keypress="buscar($event)"
                           ></v-text-field>
-                        </v-col>
-                        <v-col v-if="nombre_estudiante != ''">
-                          <v-btn
-                            class="mt-3"
-                            color="secondary"
-                            dark
-                            @click="irFichaEstudiante()"
-                          >Ficha del Estudiante</v-btn>
                         </v-col>
                       </v-row>
                       <v-row>
                         <v-col>
-                          <v-text-field label="Nombre del Estudiante" v-model="nombre_estudiante"></v-text-field>
+                          <v-text-field
+                            label="Nombre del Estudiante"
+                            v-model="nombre_estudiante"
+                          ></v-text-field>
                         </v-col>
                       </v-row>
                       <v-row>
@@ -49,71 +44,55 @@
                         </v-col>
                       </v-row>
                       <v-row>
-                        <v-spacer></v-spacer>
-                        <v-btn color="secondary" dark @click="!editando ? grabar() : modificar()">
-                          {{
-                          !editando ? 'Grabar Matricula' : 'Grabar Cambios'
-                          }}
-                        </v-btn>
-                      </v-row>
-                    </v-container>
-                  </v-card-text>
-                </v-card>
-                <br />
-                <v-card>
-                  <v-toolbar color="primary" dark>
-                    <v-spacer></v-spacer>
-                    <v-toolbar-title>Listado de Materias</v-toolbar-title>
-                    <v-spacer></v-spacer>
-                  </v-toolbar>
-                  <v-card-text>
-                    <v-container v-if="materias.length == 0">
-                      <v-row>
-                        <v-spacer></v-spacer>
-                        <div>Seleccione un Programa</div>
-                        <v-spacer></v-spacer>
-                      </v-row>
-                    </v-container>
-                    <v-row>
-                      <v-expansion-panels accordion color="primary">
-                        <v-expansion-panel v-for="item in materias" :key="item.semestre">
-                          <v-expansion-panel-header>
-                            <template v-slot:default="{ open }">
-                              <v-toolbar-title>
-                                Semestre
-                                {{ item.semestre }}
-                              </v-toolbar-title>
-                            </template>
-                          </v-expansion-panel-header>
-                          <v-expansion-panel-content
-                            v-for="matNivel in item.materiasNivel"
-                            :key="matNivel.id"
+                        <v-col>
+                          <v-tabs
+                            background-color="primary"
+                            dark
+                            next-icon="mdi-arrow-right-bold-box-outline"
+                            prev-icon="mdi-arrow-left-bold-box-outline"
                           >
-                            <table>
+                            <v-tab
+                              @click="filtrarMateriasxSemestre(item)"
+                              v-for="item in niveles"
+                              :key="item"
+                              >Semestre {{ item }}</v-tab
+                            >
+                          </v-tabs>
+                        </v-col>
+                      </v-row>
+                      <v-row>
+                        <v-col>
+                          <v-simple-table>
+                            <template v-slot:default>
                               <thead>
                                 <tr>
-                                  <td style="width: 10%;"></td>
-                                  <td style="width: 80%;">Materia</td>
-                                  <td style="width: 10%;">Créditos</td>
+                                  <th class="text-center"></th>
+                                  <th class="text-left">Nombre</th>
+                                  <th class="text-center">Creditos</th>
                                 </tr>
                               </thead>
                               <tbody>
-                                <tr>
-                                  <td>
+                                <tr
+                                  v-for="item in materiasSemestre"
+                                  :key="item.id"
+                                >
+                                  <td class="text-left">
                                     <v-checkbox
-                                      v-model="matNivel.matricular"
-                                      @change="matricularMateria(matNivel)"
+                                      v-model="item.matricular"
+                                      @change="matricularMateria(item)"
                                     ></v-checkbox>
                                   </td>
-                                  <td>{{ matNivel.nombre }}</td>
-                                  <td>{{ matNivel.creditos }}</td>
+                                  <td>{{ item.nombre }}</td>
+                                  <td class="text-center">
+                                    {{ item.creditos }}
+                                  </td>
                                 </tr>
                               </tbody>
-                            </table>
-                          </v-expansion-panel-content>
-                        </v-expansion-panel>
-                      </v-expansion-panels>
-                    </v-row>
+                            </template>
+                          </v-simple-table>
+                        </v-col>
+                      </v-row>
+                    </v-container>
                   </v-card-text>
                 </v-card>
               </v-col>
@@ -124,7 +103,7 @@
           <v-container>
             <v-row>
               <v-col>
-                <v-card elevation="20">
+                <v-card elevation="12">
                   <v-toolbar color="primary" dark flat>
                     <v-spacer></v-spacer>
                     <v-toolbar-title>Resumen de Matricula</v-toolbar-title>
@@ -151,7 +130,12 @@
                     </v-simple-table>
                   </v-card-text>
                   <v-card-actions>
-                    <v-spacer></v-spacer>
+                    <v-btn
+                      text
+                      color
+                      @click="!editando ? grabar() : modificar()"
+                      >Guardar</v-btn
+                    >
                   </v-card-actions>
                 </v-card>
               </v-col>
@@ -160,15 +144,17 @@
         </v-col>
       </v-row>
     </v-container>
-    <loader></loader>
   </default-layout>
 </template>
 
 <script>
+import DefaultLayout from '../layouts/default-layout';
 import { mapState, mapActions } from 'vuex';
 
 export default {
-
+  components: {
+    DefaultLayout,
+  },
   data() {
     return {
       materias: [],
@@ -178,7 +164,6 @@ export default {
       matriculados: [],
       materiasSemestre: [],
       estudiante: {},
-      docEstudiante: '',
       programaMatricular: 0,
       editando: false,
       matricula: [],
@@ -187,7 +172,6 @@ export default {
   mounted() {
     this.getProgramas();
   },
- 
   computed: {
     nombre_estudiante() {
       if (this.estudiante.nombre1 == null) {
@@ -208,7 +192,7 @@ export default {
   methods: {
     ...mapActions('Matriculas', ['getNivelesPrograma']),
     ...mapActions('Estudiantes', ['getEstudiante']),
-    ...mapActions('Materias', ['getMateriasxProgramaSemestre']),
+    ...mapActions('Materias', ['getMateriasxPrograma']),
     ...mapActions('Programas', ['getPrograma']),
     matricularMateria(item) {
       const index = this.matriculados.indexOf(item);
@@ -218,40 +202,25 @@ export default {
         this.matriculados.splice(index, 1);
       }
     },
-    nuevo() {
-      this.materias = [];
-      // this.programas = []
-      this.niveles = 0;
-      this.nivelActivo = 0;
-      this.matriculados = [];
-      this.materiasSemestre = [];
-      this.estudiante = {};
-      // this.docEstudiante = ''
-      this.programaMatricular = 0;
-      this.editando = false;
-      this.matricula = [];
-      this.$store.commit('Estudiantes/SET_ESTUDIANTE', {});
-    },
+
     buscar(e) {
       if (e.key == 'Enter') {
         //Buscar Matricula
-        this.$store.commit('SET_LOADING',true);
-        
-        this.nuevo();
-        
+        this.estudiante.nombre = '';
+        this.matriculados = [];
         this.$store
           .dispatch(
             'Matriculas/getMatriculaByDocEstudiante',
-            this.docEstudiante
+            this.estudiante.documento
           )
           .then((res) => {
+            console.log('estudi', res.data);
             if (res.data.length == 0) {
               //No tiene matricula, entonces buscamos el estudiante
-              this.editando = false;
               this.$store
                 .dispatch(
                   'Estudiantes/getEstudianteByDocumento',
-                  this.docEstudiante
+                  this.estudiante.documento
                 )
                 .then((est) => {
                   this.estudiante.nombre =
@@ -262,21 +231,30 @@ export default {
                     est.data.apellido1 +
                     ' ' +
                     est.data.apellido2;
-                  this.estudiante = est.data;
-                  
+                  this.estudiante.id = est.data.id;
                 })
                 .catch((err) => {
-                  this.loading = false;
-                  this.$toastr.e('Estudiante no existe.');
+                  this.$toastr.e(err.message);
                 });
             } else {
               this.editando = true;
+              console.log(res.data);
               this.matricula = res.data.matricula;
               this.estudiante = res.data.estudiante;
               this.programaMatricular = res.data.programa;
+              // this.estudiante.nombre =
+              //   res.data.estudiante.nombre1 +
+              //   ' ' +
+              //   res.data.estudiante.nombre2 +
+              //   ' ' +
+              //   res.data.estudiante.apellido1 +
+              //   ' ' +
+              //   res.data.estudiante.apellido2;
+              // this.estudiante.id = res.data.estudiante.id;
               this.detalleMatricula = res.data.detalle;
+              // this.idMatricula = res.data.matricula.id;
+
               this.cargarGridMaterias(this.programaMatricular.id);
-              
             }
           });
       }
@@ -287,37 +265,34 @@ export default {
       });
     },
     async cargarGridMaterias(idPrograma) {
+      const rtaMat = await this.getMateriasxPrograma(idPrograma);
+      console.log('rtamat', rtaMat);
+      this.materias = rtaMat.data;
       const rtaProg = await this.getNivelesPrograma(idPrograma);
       this.niveles = rtaProg.data.numero_niveles;
-
-      this.getMateriasxProgramaSemestre(idPrograma).then(res => {
-        let tmpMaterias = res.data;
-        if (this.detalleMatricula.length > 0) {
-          this.detalleMatricula.forEach((el) => {
-            tmpMaterias.forEach((item) => {
-              item.materiasNivel.map((dato) => {
-                if (dato.id == el.idMateria) {
-                  dato.matricular = true;
-                }
-                return dato;
-              });
-            });
+      this.filtrarMateriasxSemestre('1');
+    },
+    filtrarMateriasxSemestre(nivel) {
+      this.nivelActivo = nivel;
+      if (this.detalleMatricula.length > 0) {
+        this.detalleMatricula.forEach((el) => {
+          this.materias.map((dato) => {
+            if (dato.id == el.idMateria) {
+              dato.matricular = true;
+            }
+            return dato;
           });
-          tmpMaterias.forEach((element) => {
-            element.materiasNivel.forEach((materia) => {
-              if (materia.matricular) {
-                this.matriculados.push(materia);
-              }
-            });
-          });
-        }
-        this.materias = tmpMaterias;
-        this.$store.commit('SET_LOADING',false);
-      }).catch(err => {
-        this.$toastr.e(err.message)
-      })
-      
-      
+        });
+        this.materias.forEach((element) => {
+          if (element.matricular) {
+            this.matriculados.push(element);
+          }
+        });
+      }
+      this.materiasSemestre = this.materias.filter(
+        (item) => item.nivel == nivel
+      );
+      this.detalleMatricula = [];
     },
     grabar() {
       const tmpMateriasMatricular = [];
@@ -347,7 +322,6 @@ export default {
         idMatricula: this.matricula.id,
         detalle: tmpMateriasMatricular,
       };
-      console.log('matricula', matricula);
       this.$store
         .dispatch('Matriculas/modificarMatricula', matricula)
         .then((res) => {
@@ -356,10 +330,6 @@ export default {
         .catch((err) => {
           this.$toastr.e(err.message);
         });
-    },
-    irFichaEstudiante() {
-      this.$store.commit('Estudiantes/SET_ESTUDIANTE', this.estudiante);
-      this.$router.push('/ficha-estudiante');
     },
   },
 };

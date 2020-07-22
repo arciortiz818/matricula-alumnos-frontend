@@ -75,16 +75,10 @@
                   </v-row>
                   <v-row>
                     <v-col>
-                      <v-text-field
-                        label="Teléfono Casa"
-                        v-model="estudiante.telefono_casa"
-                      ></v-text-field>
+                      <v-text-field label="Teléfono Casa" v-model="estudiante.telefono_casa"></v-text-field>
                     </v-col>
                     <v-col>
-                      <v-text-field
-                        label="Teléfono Oficina"
-                        v-model="estudiante.telefono_oficina"
-                      ></v-text-field>
+                      <v-text-field label="Teléfono Oficina" v-model="estudiante.telefono_oficina"></v-text-field>
                     </v-col>
                   </v-row>
                   <v-row>
@@ -147,10 +141,7 @@
                   </v-row>
                   <v-row>
                     <v-col>
-                      <v-text-field
-                        label="Barrio"
-                        v-model="estudiante.barrio"
-                      ></v-text-field>
+                      <v-text-field label="Barrio" v-model="estudiante.barrio"></v-text-field>
                     </v-col>
                     <v-col>
                       <v-select
@@ -205,12 +196,9 @@
 </template>
 
 <script>
-import DefaultLayout from '@/layouts/default-layout.vue';
 import { mapState } from 'vuex';
 export default {
-  components: {
-    DefaultLayout,
-  },
+
   data() {
     return {
       valid: false,
